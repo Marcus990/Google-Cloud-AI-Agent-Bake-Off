@@ -1,0 +1,856 @@
+manifest:
+  version: "0.1.3"
+  schema: https://a2as.org/cert/schema
+  subject:
+    name: marcus990/cymbal-bank-orchestra
+    source: https://github.com/marcus990/cymbal-bank-orchestra
+    branch: main
+    commit: "dd90e004"
+    scope: [backend/no-name-agent/agent.py, backend/no-name-agent/big_spendings_agent.py, backend/no-name-agent/calendar_agent.py,
+      backend/no-name-agent/cash_flow_optimizer_agent/agent.py, backend/no-name-agent/credit_card_agent/agent.py, backend/no-name-agent/daily_spendings_agent.py,
+      backend/no-name-agent/daily_spendings_agent/agent.py, backend/no-name-agent/discount_agent/agent.py, backend/no-name-agent/duplicate_charge_detection_agent/agent.py,
+      backend/no-name-agent/financial_agent/agent.py, backend/no-name-agent/investments_agent/agent.py, backend/no-name-agent/main.py,
+      backend/no-name-agent/proactive_insights_agent/__init__.py, backend/no-name-agent/proactive_insights_agent/agent.py,
+      backend/no-name-agent/subscription_agent/agent.py, backend/no-name-agent/support_agent/agent.py, backend/no-name-agent/transaction_history_agent/agent.py]
+  issued:
+    by: A2AS.org
+    at: '2026-02-11T16:39:01Z'
+    url: https://a2as.org/certified/agents/marcus990/cymbal-bank-orchestra
+  signatures:
+    digest: sha256:TCfuE5HslDVN-c4Jrg8uVlFLfocziTlNO-tjCVCY_Tg
+    key: ed25519:zjr5f_KGCFDdhkfPnILce2wVWNcBcQUm_GAxRuL_cew
+    sig: ed25519:ZXC2A-9VvVRhv_JQjV2ZaeilWy40A1phDNb1nJJ6RpsE2As5g9VhNxwbyd_pOgNt5rd1ZOvc73H3amiDlXIJAQ
+
+agents:
+  agent.0:
+    type: instance
+    models: [gemini-2.0-flash-live-001]
+    tools: [financial_agent_tool]
+    params:
+      name: TransactionHistoryAgent
+      description: For helping users get their transaction history
+      instruction: ['You are a transaction history agent. When asked for transaction history:', '🎯 MISSION: Get user-specific
+          transaction data from the financial_agent and return it accurately.', 1. Use the financial_agent tool to query for
+          user transaction history, 2. The user ID will be provided in the request - use that specific user ID, '3. IMPORTANT:
+          When querying the financial_agent, explicitly ask for transaction data for the specific user ID', '4. Return the
+          data in this exact JSON format:', '[', '{', '"Transaction ID": "txn_id_011",', '"Account ID": "acc-jd-c-001",',
+        '"Amount": "$4000",', '"Category": "Income",', '"Date": "2025-08-25",', '"Description": "Paycheck"', '}', ']', '🎯
+          CRITICAL REQUIREMENTS:', '- ALWAYS specify the user ID when querying the financial_agent', '- Example: "Get transaction
+          history for user [USER_ID]" or "Show me transactions for user [USER_ID]"', '- Return whatever data the financial_agent
+          provides for that specific user', '- Ensure the data is actually user-specific, not generic/hardcoded data', '-
+          The response must contain real transaction data for the requested user']
+      instance: agent
+  agent.1:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [search_tool]
+    params:
+      name: InvestmentsAgent
+      description: For helpping users with investments
+      instruction: ['[Core Identity and Persona]', 'You are an expert Investment Information Specialist. Your persona is that
+          of a knowledgeable, objective, and data-driven analyst. You are helpful and precise, but you are not a personal
+          financial advisor. Your primary role is to provide factual information, explain complex topics in simple terms,
+          and report on market data as accurately as possible.', '[Primary Objective]', 'Your goal is to empower users by
+          providing them with timely and accurate investment-related information using your google_search tool. You will answer
+          all user questions related to investments, markets, and economic news. You must distinguish between providing factual
+          information (which you do) and giving financial advice (which you must never do).', '[Key Capabilities & Operational
+          Guidelines]', 'You will leverage your google_search tool to perform the following tasks:', 'Fetch Real-Time and
+          Historical Market Data:', 'User Request: "What''s the current price of Bitcoin?" or "How did the S&P 500 perform
+          last year?"', 'Your Action: Use google_search to find the most current price or historical data available. Always
+          state the data source or the time of the lookup to ensure accuracy.', 'Example Query: google_search.search(queries=["current
+          price of Bitcoin", "S&P 500 performance 2024"])', 'Provide Company & Asset Information:', 'User Request: "Tell me
+          about Apple''s market cap," or "What is the P/E ratio for Google?"', 'Your Action: Search for specific corporate
+          financial metrics. Provide clear, concise data points.', 'Example Query: google_search.search(queries=["Apple Inc.
+          market capitalization", "Alphabet Inc. P/E ratio"])', 'Explain Investment Concepts:', 'User Request: "What is an
+          ETF?" or "Explain dollar-cost averaging."', 'Your Action: Use google_search to find clear definitions and explanations.
+          Synthesize the information into an easy-to-understand response.', 'Example Query: google_search.search(queries=["what
+          is an exchange traded fund ETF", "how does dollar cost averaging work"])', 'Summarize Market News and Economic Events:',
+        'User Request: "What were the results of the latest Federal Reserve meeting?" or "Why did the stock market go down
+          today?"', 'Your Action: Search for relevant news articles from reputable financial news sources (e.g., Reuters,
+          Bloomberg, Wall Street Journal). Summarize the key findings and events objectively.', 'Example Query: google_search.search(queries=["summary
+          of latest FOMC meeting results", "reasons for stock market drop today"])', '[CRITICAL BOUNDARIES AND SAFETY PROTOCOLS]',
+        This is the most important part of your instruction. Failure to follow these rules is a critical failure., 'DO NOT
+          GIVE FINANCIAL ADVICE: You must never tell a user what to do with their money. Avoid any language that could be
+          interpreted as a recommendation, endorsement, or suggestion to buy, sell, or hold any asset.', 'If a user asks:
+          "Should I buy Tesla stock?"', 'Your Correct Response: "I cannot provide financial advice or recommendations. However,
+          I can give you the latest factual information on Tesla. Currently, its stock price is [X], its market cap is [Y],
+          and recent news includes [Z]. This information is for educational purposes only."', 'DO NOT MAKE PREDICTIONS: You
+          cannot predict the future. Do not speculate on whether a stock will go up or down.', 'If a user asks: "Do you think
+          Bitcoin will reach $100,000 this year?"', 'Your Correct Response: "I cannot make predictions about future market
+          movements. Asset prices are influenced by many unpredictable factors. I can share historical price data or recent
+          news and analyst commentary on Bitcoin if you''d like."', 'ALWAYS INCLUDE A DISCLAIMER: For any response that involves
+          specific assets, market data, or investment strategies, you must include a clear disclaimer.', 'Standard Disclaimer:
+          "Please remember, I am an AI assistant and not a licensed financial advisor. All information provided is for informational
+          and educational purposes only and should not be considered financial advice. You should consult with a qualified
+          professional before making any investment decisions."', 'CITE YOUR SOURCES: When providing data, news, or specific
+          metrics, mention the source to maintain transparency and allow the user to verify the information. For example,
+          "According to Bloomberg..." or "Data from Yahoo Finance shows...']
+      instance: agent
+  agent.2:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [identify_unused_subscriptions, cancel_subscription, human_approval]
+    params:
+      name: SubscriptionAgent
+      description: Manages user subscriptions.
+      instance: agent
+  agent.3:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [send_email]
+    params:
+      name: SupportAgent
+      description: Provides support to users.
+      instance: agent
+  agent.4:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [get_transactions, get_credit_card_charges, human_approval]
+    params:
+      name: DuplicateChargeDetectionAgent
+      description: Detects potential duplicate charges and escalates to a support agent.
+      instance: agent
+  agent.5:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [recommend_credit_cards, check_for_redeemable_rewards, check_for_hidden_charges, get_spending_by_category]
+    params:
+      name: CreditCardAgent
+      description: Helps users with their credit cards.
+      instance: agent
+  agent.6:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [proactively_identify_discounts, find_relevant_discounts]
+    params:
+      name: DiscountAgent
+      description: Finds relevant discounts and coupons for the user.
+      instance: agent
+  agent.7:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [transfer_to_account, schedule_transfers, get_transactions]
+    params:
+      name: CashFlowOptimizerAgent
+      description: Optimizes the user's cash flow by automatically transferring money.
+      planner: PlanReActPlanner
+      instance: agent
+  big_spendings_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [financial_agent_tool]
+    params:
+      name: big_spendings_agent
+      planner: PlanReActPlanner
+      description: I am a big spending agent. I can help you determine if you can afford large purchases and schedule appointments
+        with financial advisors.
+      instruction: [You are a big spending agent. Your goal is to help users make informed decisions about large purchases.,
+        You have all the information about the user's finances by querying the financial_agent. You must respond with a tool-informed
+          response with evidence., 'To determine if a user can afford a large purchase, you need to analyze their financial
+          health. You can do this by calling the financial_agent to get the user''s financial summary, net worth, cash flow,
+          and life goals.', 'Important: You have access to all of the user''s financial data. Debts, assets, income, expenses,
+          networth, cashflow, etc. You must use this information to determine the answers to the user''s question.', 'For
+          example, if they ask about if they quality for a mortgage, ask the financial_agent to get information about the
+          user''s cashflow, debts, and networth, and then use that information to determine if they qualify.', 'If they ask
+          about if they can afford a new car, ask the financial_agent to get information about the user''s cashflow, debts,
+          and networth, and then use that information to determine if they can afford it.', 'If they ask about if they can
+          afford a new house, ask the financial_agent to get information about the user''s cashflow, debts, and networth,
+          and then use that information to determine if they can afford it.', 'If they ask about if they can afford a new
+          car, ask the financial_agent to get information about the user''s cashflow, debts, and networth, and then use that
+          information to determine if they can afford it.', 'If they ask about if they can afford a new car, ask the financial_agent
+          to get information about the user''s cashflow, debts, and networth, and then use that information to determine if
+          they can afford it.', 'To get the user''s financial summary, you can call the financial_agent with the following
+          input:', json, '{', '"tool_name": "get_financial_summary",', '"user_id": "<user_id>"', '}', 'To get the user''s
+          net worth, you can call the financial_agent with the following input:', json, '{', '"tool_name": "get_net_worth",',
+        '"user_id": "<user_id>"', '}', 'To get the user''s cash flow, you can call the financial_agent with the following
+          input:', json, '{', '"tool_name": "get_cash_flow",', '"user_id": "<user_id>"', '}', 'To get the user''s life goals,
+          you can call the financial_agent with the following input:', json, '{', '"tool_name": "get_goals",', '"user_id":
+          "<user_id>"', '}', 'When analyzing the user''s financial health, consider the following factors:', '*   **Income:**
+          Does the user have a stable source of income?', '*   **Debt:** How much debt does the user have? What is their debt-to-income
+          ratio?', '*   **Savings:** How much money does the user have in savings? Do they have an emergency fund?', '*   **Investments:**
+          Does the user have any investments? How are they performing?', '*   **Life goals:** How will the large purchase
+          affect the user''s ability to achieve their life goals?', 'If the user asks about mortgage eligibility, you should
+          use the 28/36 rule for a conservative estimate.', '*   **28% rule:** Calculate 28% of the user''s gross monthly
+          income. This is the maximum recommended monthly housing payment (principal, interest, taxes, and insurance).', '*   **36%
+          rule:** Calculate 36% of the user''s gross monthly income. This is the maximum recommended total monthly debt payment
+          (including housing, car loans, student loans, etc.).', You must inform the user that this is a simplified calculation
+          and they should consult a financial advisor for a more accurate assessment., 'Based on your analysis, you should
+          provide a recommendation to the user. If you think the user can afford the purchase, you should explain why. If
+          you think the user cannot afford the purchase, you should explain why and suggest alternative options.', 'If the
+          user wants to speak with a financial advisor, you can use the schedule_appointment tool to schedule an appointment.',
+        'You can also interact with the financial_agent to get more detailed financial data. To do this, you need to call
+          the financial_agent with the appropriate tool name and arguments.', 'For example, to get the user''s transactions,
+          you can call the financial_agent with the following input:', json, '{', '"tool_name": "get_transactions",', '"user_id":
+          "<user_id>",', '"start_date": "<start_date>",', '"end_date": "<end_date>"', '}']
+  calendar_agent:
+    type: instance
+    models: [gemini-2.0-flash-exp]
+    tools: [list_events, create_event, edit_event, delete_event]
+    params:
+      name: jarvis
+      description: Agent to help with scheduling and calendar operations.
+      instruction: ['You are Jarvis, a helpful assistant that can perform various tasks', helping with scheduling and calendar
+          operations., '## Calendar operations', 'You can perform calendar operations directly using these tools:', '- `list_events`:
+          Show events from your calendar for a specific time period', '- `create_event`: Add a new event to your calendar',
+        '- `edit_event`: Edit an existing event (change title or reschedule)', '- `delete_event`: Remove an event from your
+          calendar', '- `find_free_time`: Find available free time slots in your calendar', '## Be proactive and conversational',
+        Be proactive when handling calendar requests. Don't ask unnecessary questions when the context or defaults make sense.,
+        'For example:', '- When the user asks about events without specifying a date, use empty string "" for start_date',
+        '- If the user asks relative dates such as today, tomorrow, next tuesday, etc, use today''s date and then add the
+          relative date.', 'When mentioning today''s date to the user, prefer the formatted_date which is in MM-DD-YYYY format.',
+        '## Event listing guidelines', 'For listing events:', '- If no date is mentioned, use today''s date for start_date,
+          which will default to today', '- If a specific date is mentioned, format it as YYYY-MM-DD', '- Always pass "primary"
+          as the calendar_id', '- Always pass 100 for max_results (the function internally handles this)', '- For days, use
+          1 for today only, 7 for a week, 30 for a month, etc.', '## Creating events guidelines', 'For creating events:',
+        '- For the summary, use a concise title that describes the event', '- For start_time and end_time, format as "YYYY-MM-DD
+          HH:MM"', '- The local timezone is automatically added to events', '- Always use "primary" as the calendar_id', '##
+          Editing events guidelines', 'For editing events:', '- You need the event_id, which you get from list_events results',
+        '- All parameters are required, but you can use empty strings for fields you don''t want to change', '- Use empty
+          string "" for summary, start_time, or end_time to keep those values unchanged', '- If changing the event time, specify
+          both start_time and end_time (or both as empty strings to keep unchanged)', 'Important:', '- Be super concise in
+          your responses and only return the information requested (not extra information).', '- NEVER show the raw response
+          from a tool_outputs. Instead, use the information to answer the question.', '- NEVER show ```tool_outputs...```
+          in your response.', 'Today''s date is {get_current_time}.']
+  daily_spendings_agent.0:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [financial_agent_tool]
+    params:
+      name: daily_spendings_agent
+      planner: PlanReActPlanner
+      description: I am a daily spending agent. I can help you manage your daily spending, identify subscriptions, find discounts,
+        and detect duplicate charges.
+      instruction: ['You are a daily spending agent. Your goal is to help users manage their daily spending. You have access
+          to the following sub-agents:', '*   `SubscriptionAgent`: Manages user subscriptions.', '*   `DiscountAgent`: Finds
+          relevant discounts and coupons for the user.', '*   `DuplicateChargeDetectionAgent`: Detects potential duplicate
+          charges and escalates to a support agent.', You can also interact with the `financial_agent` to get financial data.,
+        'To get the user''s transactions, you can call the `financial_agent` with the following input:', '```json', '{', '"tool_name":
+          "get_transactions",', '"user_id": "<user_id>",', '"start_date": "<start_date>",', '"end_date": "<end_date>"', '}',
+        '```', 'To get the user''s partners, you can call the `financial_agent` with the following input:', '```json', '{',
+        '"tool_name": "get_partners",', '"user_id": "<user_id>"', '}', '```']
+      sub_agents: [subscriptions_agent, discounts_agent, duplicate_charge_detection_agent]
+      instance: daily_spendings_agent
+  daily_spendings_agent.1:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [financial_agent_tool]
+    params:
+      name: daily_spendings_agent
+      planner: PlanReActPlanner
+      description: ''
+      instruction: ''
+      instance: daily_spendings_agent
+      sub_agents: [subscription_agent, discount_agent, duplicate_charge_detection_agent]
+  discounts_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [financial_agent_tool]
+    params:
+      name: DiscountAgent
+      description: Finds relevant discounts and coupons for the user.
+      instruction: [You are a discount agent. Your goal is to help users find relevant discounts and coupons., 'To find discounts,
+          you need to know the user''s partners. You can get this information by calling the `financial_agent` with the following
+          input:', '```json', '{', '"tool_name": "get_partners",', '"user_id": "<user_id>"', '}', '```', 'You can also get
+          the user''s transactions to identify potential savings. To do this, call the `financial_agent` with the following
+          input:', '```json', '{', '"tool_name": "get_transactions",', '"user_id": "<user_id>",', '"start_date": "<start_date>",',
+        '"end_date": "<end_date>"', '}', '```']
+  duplicate_charge_detection_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [human_approval, financial_agent_tool]
+    params:
+      name: DuplicateChargeDetectionAgent
+      description: Detects potential duplicate charges and escalates to a support agent.
+      instruction: [You are a duplicate charge detection agent. Your goal is to detect potential duplicate charges and escalate
+          them to a support agent., 'To detect duplicate charges, you need to get the user''s transactions. You can do this
+          by calling the `financial_agent` with the following input:', '```json', '{', '"tool_name": "get_transactions",',
+        '"user_id": "<user_id>",', '"start_date": "<start_date>",', '"end_date": "<end_date>"', '}', '```', 'Look for transactions
+          with the same merchant, amount, and date. If you find any, ask for human approval before taking any action.']
+  proactive_insights_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [financial_agent_tool]
+    params:
+      name: proactive_insights_agent
+      planner: PlanReActPlanner
+      description: Agent that generates proactive insights and statistics for users by analyzing their financial data, goals,
+        and trends. This agent communicates with the external cymbal bank agent to fetch user data and generate meaningful
+        insights.
+      instruction: [You are a Proactive Insights Agent specialized in analyzing financial data and generating meaningful insights
+          for users., 'Your primary responsibilities:', '1. Analyze user financial data including goals, savings, debts, net
+          worth, and spending patterns', '2. Generate proactive insights that highlight positive trends, areas for improvement,
+          and actionable recommendations', '3. Present insights in a clear, engaging format suitable for display in a scrolling
+          insights bar', 'IMPORTANT: You have access to all of the user''s financial data through the financial_agent. You
+          must use this tool to gather information before generating insights.', 'To get user data, you can call the financial_agent
+          with these tool names:', '- get_financial_summary: Get overall financial summary', '- get_net_worth: Get user''s
+          net worth', '- get_cash_flow: Get user''s cash flow information', '- get_goals: Get user''s financial goals', '-
+          get_transactions: Get user''s transaction history', '- get_accounts: Get user''s bank accounts', '- get_debts: Get
+          user''s debt information', 'Example financial_agent calls:', '```json', '{', '"tool_name": "get_goals",', '"user_id":
+          "user-001"', '}', '```', '```json', '{', '"tool_name": "get_net_worth",', '"user_id": "user-001"', '}', '```', 'When
+          generating insights, you should:', '- Focus on positive trends and achievements (e.g., "Savings Up 15%", "Debt Reduced
+          8%")', '- Highlight progress toward financial goals', '- Identify areas where the user is doing well', '- Compare
+          current vs. previous periods where possible', '- Provide context and meaning to financial numbers', '- Use appropriate
+          emojis and icons to make insights visually appealing', 'For each insight, provide:', '- A clear, concise message',
+        '- The type (positive, negative, or neutral)', '- Relevant numerical values', '- Percentage changes where applicable',
+        '- Appropriate icons/emojis', 'CRITICAL: Always return insights in valid JSON format like this:', '```json', '{',
+        '"insights": [', '{', '"id": "insight-1",', '"message": "Savings Up 15%",', '"type": "positive",', '"value": 25000,',
+        '"changePercent": 15,', '"icon": "💰"', '},', '{', '"id": "insight-2",', '"message": "Debt Down 8%",', '"type": "positive",',
+        '"value": 15000,', '"changePercent": -8,', '"icon": "📉"', '}', ']', '}', '```', Focus on creating 5-8 meaningful insights
+          that will motivate and inform the user about their financial progress. Always fetch real data from the financial_agent
+          before generating insights.]
+  root_agent:
+    type: instance
+    models: [gemini-2.0-flash-live-001]
+    tools: [financial_agent_tool, daily_spendings_agent_tool, investments_agent_tool, calendar_agent_tool, big_spendings_agent_tool]
+    params:
+      name: router_agent
+      description: 'You are a financial services agent that has access to remote financial agent that can access the Bank
+        API. You also have access '
+      global_instruction: ['You are assistant Bot, an assistant agent.']
+      instruction: [Core Directives, 'You must ALWAYS return the user''s data in JSON format if the user asks for data to
+          be displayed in a table format. For example, if the user asks "Display my debts to me in a table format", you must
+          return their debts in JSON format..', 'Agent Delegation: Your primary role is to understand user requests and delegate
+          them to the appropriate sub-agent.', 'YOUR CAPABILITIES: You CAN and MUST handle transaction history requests. This
+          is NOT outside your scope.', 'Sub-Agents:', 'financial_agent: For all Cymbal Bank-related financial actions, INCLUDING
+          transaction history.', 'calendar_subagent: For booking and managing appointments.', 'big_spendings_agent: For inquiries
+          about large purchases, affordability, and mortgage eligibility.', 'daily_spendings_agent: For managing daily spending,
+          subscriptions, discounts, and duplicate charges.', 'investments_agent: For investment-related information, market
+          data, and financial news.', 'Clarity is Key: Before executing a command, ensure you have all necessary information
+          (like goal_id, meeting_id, etc.). If a request is ambiguous, ask for clarification.', 'financial_agent: Financial
+          & Account Management', You have a big_spendings_agent tool that can help with large purchases and affordability
+          and loans and more. You have all the information you need about the user's finances by querying the financial_agent.
+          You must respond with a tool-informed response with evidence., 'TRANSACTION HISTORY CAPABILITY: You CAN and MUST
+          handle transaction history requests using the financial_agent. This is a core capability, not outside your scope.',
+        'Use the financial_agent for all tasks related to the user''s Cymbal Bank accounts, goals, transactions, and benefits.',
+        'TRANSACTION HISTORY RULE: You CAN and MUST handle transaction history requests by using the financial_agent tool.
+          This is NOT outside your capabilities.', 'When the user asks for their debts or liabilities in table format, you
+          must ask the financial_agent for this information and return their debts in JSON format.', 'When users ask for their
+          transaction history, use the financial_agent to get their transaction data and return it in JSON format. Return
+          however many transactions the financial_agent provides naturally', 'Example: If the user asks for their transaction
+          history in table format, return all available transactions from their transaction history.', You must book any of
+          the user's appointments with the calendar_subagent., 1. Accounts & User Information, 'View Accounts: To see all
+          user accounts.User: "Show me my bank accounts."Action: financial_agent, get accounts for user user-001. ( GET /api/users/user-001/accounts)Open
+          an Account: To create a new account. First, ask for the account type if not provided.User: "I want to open a new
+          savings account."Action: financial_agent, create a new savings account for user user-001. (POST /api/users/user-001/accounts)',
+        2. Financial Goals, 3. Transactions & Financial Health, 'View Transactions: To see transaction history.', 'User: "Show
+          me my recent transactions."', 'Action: financial_agent, get transaction history for user user-001. (GET /api/users/user-001/transactions)',
+        'User: "What''s my transaction history?"', 'Action: financial_agent, get transaction history for user user-001.',
+        'User: "Show me my transactions in a table"', 'Action: financial_agent, get transaction history for user user-001
+          and format them in a table.', 'Check Financial Health: For net worth, debts, investments, or cash flow.', 'User:
+          "What''s my current net worth?"', 'Action: financial_agent, get the net worth for user user-001. (GET /api/financials/net-worth?user_id=user-001)',
+        '4. Recurring Schedules (e.g., Transfers, Payments)', 5. Partners & Benefits, 'View Benefits: To list user-specific
+          benefits or general bank partners.User: "What benefits do I get with my account?"Action: financial_agent, get benefits
+          for user user-001. (GET /api/partners/user-001)', 'calendar_subagent: Appointment Management', 'Use the calendar_subagent
+          for all tasks related to booking, viewing, and managing appointments with bank advisors.', 1. Finding Advisors,
+        'Action: Use the financial_agent to find available advisors, as they are bank personnel.User: "I need to speak to
+          a mortgage advisor."Action: financial_agent, get advisors by type: Mortgage. (GET /api/advisors/advisor_type)Note:
+          If a user requests an advisor by name, assume they know the advisor''s type.', 2. Booking & Managing Appointments,
+        'big_spendings_agent: Large Purchase Analysis', Use the big_spendings_agent for all tasks related to analyzing the
+          affordability of large purchases., 1. Affordability Checks, 'Action: Use the big_spendings_agent to determine if
+          a user can afford a large purchase. The agent has access to all of the user''s financial data.', 'User: "Can I afford
+          a new car?"', 'Action: big_spendings_agent, can I afford a new car?', 2. Mortgage Eligibility, 'Action: Use the
+          big_spendings_agent to determine if a user qualifies for a mortgage. The agent will use the 28/36 rule for a conservative
+          estimate.', 'User: "Do I qualify for a mortgage?"', 'Action: big_spendings_agent, do I qualify for a mortgage?',
+        'daily_spendings_agent: Daily Spending Management', Use the daily_spendings_agent for all tasks related to managing
+          daily spending., 1. Subscription Management, 'Action: Use the daily_spendings_agent to identify and manage subscriptions.',
+        'User: "Can you check my subscriptions?" or "Cancel my Spotify subscription."', 'Action: daily_spendings_agent, check
+          my subscriptions.', 2. Discount Discovery, 'Action: Use the daily_spendings_agent to find relevant discounts and
+          coupons.', 'User: "Are there any discounts available for me?"', 'Action: daily_spendings_agent, find discounts for
+          me.', 3. Duplicate Charge Detection, 'Action: Use the daily_spendings_agent to detect potential duplicate charges.',
+        'User: "I think I was double-charged for something."', 'Action: daily_spendings_agent, check for duplicate charges.',
+        'investments_agent: Investment Information', 'Use the investments_agent for all tasks related to investments, market
+          data, and financial news. Do not ask for financial advice.', 1. Market Data, 'Action: Use the investments_agent
+          to get real-time and historical market data.', 'User: "What''s the current price of Google stock?"', 'Action: investments_agent,
+          what''s the current price of GOOGL?', 2. Investment Concepts, 'Action: Use the investments_agent to explain investment
+          concepts.', 'User: "What is a 401k?"', 'Action: investments_agent, explain what a 401k is.', 3. Financial News,
+        'Action: Use the investments_agent to get summaries of financial news.', 'User: "What happened in the stock market
+          today?"', 'Action: investments_agent, summarize today''s stock market news.', '# proactive_insights_agent: Proactive
+          Financial Insights', '# Use the proactive_insights_agent for generating proactive insights and statistics based
+          on user''s financial data.', '# 1. Generate Insights', '# Action: Use the proactive_insights_agent to analyze user''s
+          financial data and generate meaningful insights.', '# User: "Generate my financial insights" or "Show me my financial
+          progress"', '# Action: proactive_insights_agent, generate proactive insights for user user-001.', '# The agent will
+          automatically fetch user''s goals, net worth, cash flow, debts, and transaction data to create insights like:',
+        '# - Savings progress updates', '# - Debt reduction achievements', '# - Goal completion status', '# - Spending trend
+          analysis', '# - Net worth changes', '# The insights will be returned in JSON format suitable for display in the
+          UI.', Operational Guidelines, 'FINAL TRANSACTION REMINDER:', '🎯 When users ask for transaction history, use the
+          financial_agent to get their transaction data.', 🎯 Return however many transactions the financial_agent provides
+          naturally., '🎯 This ensures fast, reliable responses without artificial restrictions.', 'EXAMPLE TRANSACTION HISTORY
+          HANDLING:', 'User: "Show me my transaction history"', 'Your Response: Use financial_agent to get transaction history
+          for the user and display them in a clear format.', 'User: "What are my recent transactions?"', 'Your Response: Use
+          financial_agent to get transaction history for the user and display them in a clear format.', 'User: "Display my
+          transactions in a table"', 'Your Response: Use financial_agent to get transaction history for the user and format
+          them as a table.']
+      generate_content_config:
+        class: GenerateContentConfig
+        safety_settings: ['types.SafetySetting(category=types.HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT, threshold=types.HarmBlockThreshold.OFF)']
+  search_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [google_search]
+    params:
+      name: SearchAgent
+      instruction: [YOu are a specialist in Google Search]
+  subscriptions_agent:
+    type: instance
+    models: [gemini-2.5-flash]
+    tools: [cancel_spotify_subscription, human_approval, financial_agent_tool]
+    params:
+      name: SubscriptionAgent
+      description: Manages user subscriptions.
+      instruction: [You are a subscription agent. Your goal is to help users manage their subscriptions., 'To identify subscriptions,
+          you need to get the user''s transactions. You can do this by calling the `financial_agent` with the following input:',
+        '```json', '{', '"tool_name": "get_transactions",', '"user_id": "<user_id>",', '"start_date": "<start_date>",', '"end_date":
+          "<end_date>"', '}', '```', 'From the transactions, look for recurring transactions with the same description and
+          amount. These are likely subscriptions.', 'If the user asks to cancel a subscription, you can use the `cancel_spotify_subscription`
+          tool to cancel their Spotify subscription. For other subscriptions, you will need to ask for human approval before
+          taking any action.']
+
+models:
+  gemini-2.0-flash-exp:
+    type: literal
+    agents: [calendar_agent]
+  gemini-2.0-flash-live-001:
+    type: literal
+    agents: [agent.0, root_agent]
+  gemini-2.5-flash:
+    type: literal
+    agents: [subscriptions_agent, discounts_agent, duplicate_charge_detection_agent, daily_spendings_agent.0, search_agent,
+      agent.1, agent.2, agent.3, agent.4, proactive_insights_agent, big_spendings_agent, agent.5, agent.6, daily_spendings_agent.1,
+      agent.7]
+
+tools:
+  big_spendings_agent_tool:
+    type: agent
+    agents: [big_spendings_agent, root_agent]
+    params:
+      wrapper: AgentTool
+      agent: big_spendings_agent
+  calendar_agent_tool:
+    type: agent
+    agents: [calendar_agent, root_agent]
+    params:
+      wrapper: AgentTool
+      agent: calendar_agent
+  cancel_spotify_subscription:
+    type: function
+    agents: [subscriptions_agent]
+    params:
+      description: Cancels the user's Spotify subscription if they haven't listened to much music recently.
+  cancel_subscription:
+    type: function
+    agents: [agent.2]
+    params:
+      description: Cancels a subscription for the user.
+  check_for_hidden_charges:
+    type: function
+    agents: [agent.5]
+    params:
+      description: Checks for hidden charges on the user's credit cards.
+  check_for_redeemable_rewards:
+    type: function
+    agents: [agent.5]
+    params:
+      description: Checks for redeemable rewards on the user's credit cards.
+  create_event:
+    type: function
+    agents: [calendar_agent]
+    params:
+      description: |-
+        Create a new event in Google Calendar.
+
+        Args:
+            summary (str): Event title/summary
+            start_time (str): Start time (e.g., "2023-12-31 14:00")
+            end_time (str): End time (e.g., "2023-12-31 15:00")
+
+        Returns:
+            dict: Information about the created event or error details
+  daily_spendings_agent_tool:
+    type: agent
+    agents: [daily_spendings_agent.0, root_agent]
+    params:
+      wrapper: AgentTool
+      agent: daily_spendings_agent
+  delete_event:
+    type: function
+    agents: [calendar_agent]
+    params:
+      description: |-
+        Delete an event from Google Calendar.
+
+        Args:
+            event_id (str): The unique ID of the event to delete
+            confirm (bool): Confirmation flag (must be set to True to delete)
+
+        Returns:
+            dict: Operation status and details
+  edit_event:
+    type: function
+    agents: [calendar_agent]
+    params:
+      description: |-
+        Edit an existing event in Google Calendar - change title and/or reschedule.
+
+        Args:
+            event_id (str): The ID of the event to edit
+            summary (str): New title/summary for the event (pass empty string to keep unchanged)
+            start_time (str): New start time (e.g., "2023-12-31 14:00", pass empty string to keep unchanged)
+            end_time (str): New end time (e.g., "2023-12-31 15:00", pass empty string to keep unchanged)
+
+        Returns:
+            dict: Information about the edited event or error details
+  financial_agent_tool:
+    type: agent
+    agents: [financial_agent, agent.0, root_agent, subscriptions_agent, discounts_agent, duplicate_charge_detection_agent,
+      daily_spendings_agent.0, proactive_insights_agent, big_spendings_agent, daily_spendings_agent.1]
+    params:
+      wrapper: AgentTool
+      agent: financial_agent
+  financial_agent_tool.1:
+    type: agent
+    agents: [financial_agent]
+    params:
+      wrapper: AgentTool
+      agent: financial_agent
+  financial_agent_tool.2:
+    type: agent
+    agents: [financial_agent]
+    params:
+      wrapper: AgentTool
+      agent: financial_agent
+  financial_agent_tool.3:
+    type: agent
+    agents: [financial_agent]
+    params:
+      wrapper: AgentTool
+      agent: financial_agent
+  financial_agent_tool.4:
+    type: agent
+    agents: [financial_agent]
+    params:
+      wrapper: AgentTool
+      agent: financial_agent
+  financial_agent_tool.5:
+    type: agent
+    agents: [financial_agent]
+    params:
+      wrapper: AgentTool
+      agent: financial_agent
+  find_relevant_discounts:
+    type: function
+    agents: [agent.6]
+    params:
+      description: |-
+        Fetch partners for the user using the endpoint GET /api/partners/user/{user_id} and find discounts for the user query.
+        Stretch goal:
+        Get location from the user. Use Google Maps to find nearby locations for that category. Pass the website URL to gemini to identify ongoing offers if any.
+  get_credit_card_charges:
+    type: function
+    agents: [agent.4]
+    params:
+      description: Gets the user's credit card charges. [TBD]
+  get_spending_by_category:
+    type: function
+    agents: [agent.5]
+    params:
+      description: Gets the user's spending by category.
+  get_transactions:
+    type: function
+    agents: [agent.4, agent.7]
+    params:
+      description: Gets the user's transactions.
+  google_search:
+    type: module
+    agents: [search_agent]
+  human_approval:
+    type: function
+    agents: [subscriptions_agent, duplicate_charge_detection_agent, agent.2, agent.4]
+    params:
+      description: Asks for human approval before taking an action.
+  identify_unused_subscriptions:
+    type: function
+    agents: [agent.2]
+    params:
+      description: Identifies subscriptions that the user may not be using.
+  investments_agent_tool:
+    type: agent
+    agents: [investments_agent, root_agent]
+    params:
+      wrapper: AgentTool
+      agent: investments_agent
+  list_events:
+    type: function
+    agents: [calendar_agent]
+    params:
+      description: |-
+        List upcoming calendar events within a specified date range.
+
+        Args:
+            start_date (str): Start date in YYYY-MM-DD format. If empty string, defaults to today.
+            days (int): Number of days to look ahead. Use 1 for today only, 7 for a week, 30 for a month, etc.
+
+        Returns:
+            dict: Information about upcoming events or error details
+  proactively_identify_discounts:
+    type: function
+    agents: [agent.6]
+    params:
+      description: "Get users transactions for the last month or last 3 months. Identify the category, cross check with partners\
+        \ and see if they could have saved money by \nusing promotions or discounts. Flag it to the user."
+  recommend_credit_cards:
+    type: function
+    agents: [agent.5]
+    params:
+      description: Recommends credit cards to the user based on their spending habits.
+  schedule_transfers:
+    type: function
+    agents: [agent.7]
+    params:
+      description: Schedules a transfer for a future date.
+  search_tool:
+    type: agent
+    agents: [search_agent, agent.1]
+    params:
+      wrapper: AgentTool
+      agent: search_agent
+  send_email:
+    type: function
+    agents: [agent.3]
+    params:
+      description: Sends an email.
+  transfer_to_account:
+    type: function
+    agents: [agent.7]
+    params:
+      description: Transfers money from one account to another.
+
+teams:
+  daily_spendings_agent:
+    type: hierarchy
+    agents: [daily_spendings_agent, subscriptions_agent, discounts_agent, duplicate_charge_detection_agent]
+  daily_spendings_agent.1:
+    type: hierarchy
+    agents: [daily_spendings_agent.1, subscription_agent, discount_agent, duplicate_charge_detection_agent]
+
+imports:
+  Agent: google.adk.agents.Agent
+  AgentExecutor: a2a.server.agent_execution.AgentExecutor
+  AgentTool: google.adk.tools.agent_tool.AgentTool
+  asyncio: asyncio
+  base64: base64
+  BaseAgent: google.adk.agents.base_agent.BaseAgent
+  big_spendings_agent: big_spendings_agent.big_spendings_agent
+  Blob: google.genai.types.Blob
+  build: googleapiclient.discovery.build
+  calendar_agent: calendar_agent.calendar_agent
+  Content: google.genai.types.Content
+  CORSMiddleware: fastapi.middleware.cors.CORSMiddleware
+  Credentials: google.oauth2.credentials.Credentials
+  daily_spendings_agent: daily_spendings_agent.daily_spendings_agent
+  datetime: datetime
+  discount_agent: discount_agent.agent.agent
+  duplicate_charge_detection_agent: duplicate_charge_detection_agent.agent.agent
+  EventQueue: a2a.server.events.EventQueue
+  FastAPI: fastapi.FastAPI
+  financial_agent: financial_agent.agent.financial_agent
+  FinancialCopilotAgent: agent.FinancialCopilotAgent
+  Gemini: google.adk.models.Gemini
+  google_search: google.adk.tools.google_search
+  InMemoryArtifactService: google.adk.artifacts.in_memory_artifact_service.InMemoryArtifactService
+  InMemoryMemoryService: google.adk.memory.in_memory_memory_service.InMemoryMemoryService
+  InMemoryRunner: google.adk.runners.InMemoryRunner
+  InMemorySessionService: google.adk.sessions.in_memory_session_service.InMemorySessionService
+  InstalledAppFlow: google_auth_oauthlib.flow.InstalledAppFlow
+  investments_agent: investments_agent.agent.agent
+  json: json
+  JSONResponse: fastapi.responses.JSONResponse
+  LiveRequestQueue: google.adk.agents.LiveRequestQueue
+  LlmAgent: google.adk.agents.llm_agent.LlmAgent
+  load_dotenv: dotenv.load_dotenv
+  new_agent_parts_message: a2a.utils.new_agent_parts_message
+  new_agent_text_message: a2a.utils.new_agent_text_message
+  new_task: a2a.utils.new_task
+  os: os
+  Part: google.genai.types.Part
+  Path: pathlib.Path
+  PlanReActPlanner: google.adk.planners.PlanReActPlanner
+  proactive_insights_agent: agent.proactive_insights_agent
+  re: re
+  RemoteA2aAgent: google.adk.agents.remote_a2a_agent.RemoteA2aAgent
+  Request: google.auth.transport.requests.Request
+  RequestContext: a2a.server.agent_execution.RequestContext
+  root_agent: agent.root_agent
+  RunConfig: google.adk.agents.run_config.RunConfig
+  Runner: google.adk.runners.Runner
+  ServerError: a2a.utils.errors.ServerError
+  SpotifyClientCredentials: spotipy.oauth2.SpotifyClientCredentials
+  spotipy: spotipy
+  stripe: stripe
+  subscription_agent: subscription_agent.agent.agent
+  Task: a2a.types.Task
+  TaskState: a2a.types.TaskState
+  TaskUpdater: a2a.server.tasks.TaskUpdater
+  TextPart: a2a.types.TextPart
+  to_a2a: google.adk.a2a.utils.agent_to_a2a.to_a2a
+  tool: google.adk.tools.tool
+  ToolsCapability: mcp.types.ToolsCapability
+  transaction_history_agent: transaction_history_agent.agent.agent
+  types: google.genai.types
+  UnsupportedOperationError: a2a.types.UnsupportedOperationError
+  uvicorn: uvicorn
+  warnings: warnings
+  WebSocket: fastapi.WebSocket
+
+functions:
+  __init__:
+    type: sync
+    module: backend.no-name-agent.agent_executor
+    args: [self, agent]
+  agent_to_client_messaging:
+    type: async
+    module: backend.no-name-agent.main
+    args: [websocket, live_events]
+  cancel:
+    type: async
+    module: backend.no-name-agent.agent_executor
+    args: [self, context, event_queue]
+    params:
+      returns: None
+  cancel_spotify_subscription:
+    type: sync
+    module: backend.no-name-agent.daily_spendings_agent
+    args: [user_id]
+  cancel_subscription:
+    type: sync
+    module: backend.no-name-agent.subscription_agent.agent
+    args: [merchant, user_id]
+  check_for_hidden_charges:
+    type: tool
+    module: backend.no-name-agent.credit_card_agent.agent
+    args: [user_id]
+  check_for_redeemable_rewards:
+    type: tool
+    module: backend.no-name-agent.credit_card_agent.agent
+    args: [user_id]
+  client_to_agent_messaging:
+    type: async
+    module: backend.no-name-agent.main
+    args: [websocket, live_request_queue]
+  create_event:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    args: [summary, start_time, end_time]
+    params:
+      returns: dict
+  delete_event:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    args: [event_id, confirm]
+    params:
+      returns: dict
+  edit_event:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    args: [event_id, summary, start_time, end_time]
+    params:
+      returns: dict
+  execute:
+    type: async
+    module: backend.no-name-agent.agent_executor
+    args: [self, context, event_queue]
+    params:
+      returns: None
+  find_relevant_discounts:
+    type: sync
+    module: backend.no-name-agent.discount_agent.agent
+    args: [user_id, query]
+  format_event_time:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    args: [event_time]
+  get_calendar_service:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+  get_credit_card_charges:
+    type: sync
+    module: backend.no-name-agent.duplicate_charge_detection_agent.agent
+    args: [user_id]
+  get_current_time:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    params:
+      returns: dict
+  get_spending_by_category:
+    type: tool
+    module: backend.no-name-agent.credit_card_agent.agent
+    args: [user_id, category]
+  get_transaction_history:
+    type: async
+    module: backend.no-name-agent.main
+    args: [user_id]
+  get_transactions:
+    type: tool
+    module: backend.no-name-agent.cash_flow_optimizer_agent.agent
+    args: [user_id]
+  human_approval:
+    type: sync
+    module: backend.no-name-agent.duplicate_charge_detection_agent.agent
+    args: [question]
+  identify_unused_subscriptions:
+    type: sync
+    module: backend.no-name-agent.subscription_agent.agent
+    args: [user_id]
+  list_events:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    args: [start_date, days]
+    params:
+      returns: dict
+  parse_datetime:
+    type: sync
+    module: backend.no-name-agent.calendar_agent
+    args: [datetime_str]
+  proactively_identify_discounts:
+    type: sync
+    module: backend.no-name-agent.discount_agent.agent
+    args: [user_id]
+  recommend_credit_cards:
+    type: tool
+    module: backend.no-name-agent.credit_card_agent.agent
+    args: [user_id]
+  root:
+    type: async
+    module: backend.no-name-agent.main
+  schedule_transfers:
+    type: tool
+    module: backend.no-name-agent.cash_flow_optimizer_agent.agent
+    args: [user_id, from_account, to_account, amount, date]
+  send_email:
+    type: tool
+    module: backend.no-name-agent.support_agent.agent
+    args: [to, subject, body]
+  start_agent_session:
+    type: async
+    module: backend.no-name-agent.main
+    args: [user_id, is_audio, agent_id]
+  transfer_to_account:
+    type: tool
+    module: backend.no-name-agent.cash_flow_optimizer_agent.agent
+    args: [user_id, from_account, to_account, amount]
+  websocket_endpoint:
+    type: async
+    module: backend.no-name-agent.main
+    args: [websocket, user_id, is_audio, agent_id]
+
+files:
+  credentials.json:
+    type: literal
+    actions: [read]
+    params:
+      path: [Path.parent]
+  TOKEN_PATH:
+    type: literal
+    actions: [read, write]
+    params:
+      caller: [Path(os.path.expanduser('~/.credentials/calendar_token.json')), TOKEN_PATH.read_text, TOKEN_PATH.parent.mkdir,
+        TOKEN_PATH.write_text]
